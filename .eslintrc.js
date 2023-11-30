@@ -3,7 +3,14 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['next/core-web-vitals', 'standard-with-typescript', 'plugin:react/recommended'],
+  extends: [
+    'next/core-web-vitals',
+    'standard-with-typescript',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'prettier',
+  ],
   overrides: [
     {
       env: {
@@ -48,12 +55,12 @@ module.exports = {
         pathGroups: [
           // 指定した順番にソートされる
           {
-            pattern: '@/components/common',
+            pattern: '@/components/',
             group: 'internal',
             position: 'before',
           },
           {
-            pattern: '@/components/hooks',
+            pattern: '@/hooks',
             group: 'internal',
             position: 'before',
           },

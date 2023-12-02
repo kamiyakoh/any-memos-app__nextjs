@@ -1,6 +1,9 @@
 import { FC } from 'react';
 
+import { initMocks } from 'mocks';
+
 import type { Metadata } from 'next';
+
 import './globals.css';
 
 interface Props {
@@ -12,6 +15,8 @@ export const metadata: Metadata = {
   description: 'Only one page Memo App',
   icons: { icon: '/favicon.ico' },
 };
+
+if (process.env.NODE_ENV === 'development') initMocks().catch(console.error);
 
 const RootLayout: FC<Props> = ({ children }) => {
   return (

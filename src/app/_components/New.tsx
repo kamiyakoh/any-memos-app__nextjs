@@ -1,7 +1,7 @@
 'use client';
 import { FC, useState } from 'react';
 
-import { clientAxiosInstance } from 'app/utils/clientAxiosInstance';
+import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 import { MemoData } from 'pages/api/types';
 
 export const New: FC = () => {

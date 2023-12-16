@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 
-import { dbAxiosInstance } from 'app/utils/axiosInstance';
+import { dbAxiosInstance } from 'app/_utils/axiosInstance';
 
 import { authenticate } from '../authenticate';
 import { MemoData } from '../types';

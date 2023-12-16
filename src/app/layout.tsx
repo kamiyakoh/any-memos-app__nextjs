@@ -1,7 +1,8 @@
+import { Metadata } from 'next';
 import { FC } from 'react';
 
-import type { Metadata } from 'next';
-import './globals.css';
+import 'app/globals.css';
+import Providers from 'app/_Providers';
 
 interface Props {
   children: React.ReactNode;
@@ -16,7 +17,9 @@ export const metadata: Metadata = {
 const RootLayout: FC<Props> = ({ children }) => {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 };

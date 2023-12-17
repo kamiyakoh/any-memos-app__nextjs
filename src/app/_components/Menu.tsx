@@ -12,8 +12,6 @@ interface Props {
 export const Menu: FC<Props> = ({ onClickShowBgPreview }) => {
   const {
     menuOption,
-    isFixedBgImg,
-    isFixedBgFilter,
     handleBgImgChange,
     handleBgFilterChange,
     handleAddMonth,
@@ -21,6 +19,8 @@ export const Menu: FC<Props> = ({ onClickShowBgPreview }) => {
     onClickErrorToast,
     onClickMenuReset,
   } = useMenu();
+  const isFixedBgImg = menuOption.bgImg !== 'unfixed';
+  const isFixedBgFilter = menuOption.bgFilter !== 'unfixed';
 
   return (
     <div>

@@ -1,5 +1,4 @@
-'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
 
@@ -10,8 +9,6 @@ import type { MenuOption } from 'app/types';
 
 interface UseMenu {
   menuOption: MenuOption;
-  isFixedBgImg: boolean;
-  isFixedBgFilter: boolean;
   isShowBgPreview: boolean;
   handleBgImgChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleBgFilterChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,20 +23,6 @@ interface UseMenu {
 export const useMenu = (): UseMenu => {
   const [menuOption, setMenuOption] = useRecoilState(menuOptionState);
   const [isShowBgPreview, setIsShowBgPreview] = useState(false);
-  const [isFixedBgImg, setIsFixedBgImg] = useState(false);
-  const [isFixedBgFilter, setIsFixedBgFilter] = useState(false);
-  useEffect(() => {
-    if (menuOption.bgImg !== 'unfixed') {
-      setIsFixedBgImg(true);
-    } else {
-      setIsFixedBgImg(false);
-    }
-    if (menuOption.bgFilter !== 'unfixed') {
-      setIsFixedBgFilter(true);
-    } else {
-      setIsFixedBgFilter(false);
-    }
-  }, [menuOption.bgImg, menuOption.bgFilter]);
 
   const handleBgImgChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const selectedValue = event.target.value;
@@ -100,8 +83,6 @@ export const useMenu = (): UseMenu => {
 
   return {
     menuOption,
-    isFixedBgImg,
-    isFixedBgFilter,
     isShowBgPreview,
     handleBgImgChange,
     handleBgFilterChange,

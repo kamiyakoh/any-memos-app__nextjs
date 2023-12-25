@@ -1,66 +1,35 @@
 'use client';
-import axios, { AxiosResponse } from 'axios';
-import { useRouter } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC } from 'react';
+
+import { Button } from 'app/_components/uiParts/Button';
+import { useLogin } from 'app/_hooks/useLogin';
 
 export const Login: FC = () => {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const loginHandle = async (email: string, password: string): Promise<string> => {
-    try {
-      const response: AxiosResponse<string> = await axios.post('/api/login', {
-        email,
-        password,
-      });
-      return response.data;
-    } catch (error) {
-      throw new Error('Login failed');
-    }
-  };
-  const onSubmit = (): void => {
-    loginHandle(email, password)
-      .then(() => {
-        router.refresh();
-        // location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const { register, handleSubmit, handleLogin } = useLogin();
 
   return (
-    <form action="POST">
-      <label htmlFor="email">
-        email:
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
-      </label>
-      <label htmlFor="password" className="ml-4">
-        password:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
-      </label>
-      <button
-        type="submit"
-        onClick={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-        className="text-white bg-violet-500 p-1 ml-4"
-      >
-        送信
-      </button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit(handleLogin)}>
+        <label htmlFor="email">
+          メールアドレス
+          <br />
+          <input type="email" className="my-2 rounded-sm border-gray-400 border-2 shadow-sm" {...register('email')} />
+        </label>
+        <br />
+        <label htmlFor="password">
+          パスワード
+          <br />
+          <input
+            type="password"
+            className="my-2 rounded-sm border-gray-400 border-2 shadow-sm"
+            {...register('password')}
+          />
+        </label>
+        <br />
+        <Button className="mt-4 text-white bg-violet-500 hover:bg-violet-600" type="submit">
+          ログイン
+        </Button>
+      </form>
+    </div>
   );
 };

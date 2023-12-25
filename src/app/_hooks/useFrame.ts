@@ -1,17 +1,16 @@
 'use client';
 import dayjs from 'dayjs';
-// import { StaticImageData } from 'next/image';
 import { useMemo, useCallback } from 'react';
 
 import { useMenu } from './useMenu';
 
-import type { BgImg, BgFilter, MixBlendMode } from '../types';
+import type { BgImg, BgFilter, MixBlendMode } from '../_types';
 
 interface BgBrend {
   colors: string[];
   mixBrendMode: MixBlendMode;
 }
-interface UseApp {
+interface UseFrame {
   bgImg: string;
   bgFilter: BgBrend;
 }
@@ -22,7 +21,7 @@ interface BgFilters {
   evening: BgBrend;
 }
 
-export const useHome = (): UseApp => {
+export const useFrame = (): UseFrame => {
   const bgAutumn = '/img/bgAutumn.jpg';
   const bgSummer = '/img/bgSummer.jpg';
   const bgSpring = '/img/bgSpring.jpg';

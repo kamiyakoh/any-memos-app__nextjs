@@ -1,53 +1,74 @@
-'use client';
-import { FC, useState } from 'react';
+import { WeekDayJa } from 'app/_components/uiParts/WeekDayJa';
+import { FC } from 'react';
 
-import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
-import { MemoData } from 'pages/api/types';
+import { DiffDays } from 'app/_components//DiffDays';
+import { Button } from 'app/_components/uiParts/Button';
+import { useNew } from 'app/_hooks/useNew';
 
 export const New: FC = () => {
-  const [title, setTitle] = useState('');
-  const newHandle = async (title: string): Promise<MemoData> => {
-    try {
-      const response = await clientAxiosInstance.post(`/api/memo`, {
-        title,
-      });
-      return response.data as MemoData;
-    } catch {
-      throw new Error('Login failed');
-    }
-  };
-  const onSubmit = (): void => {
-    newHandle(title)
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const { watchDate, register, handleSubmit, postMemo } = useNew();
 
   return (
-    <form action="POST">
-      <label htmlFor="title">
-        title:
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-        />
-      </label>
-      <button
-        type="submit"
-        onClick={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-        className="text-white bg-blue-500 p-1 ml-4"
-      >
-        作成
-      </button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit(postMemo)}>
+        <label htmlFor="title">
+          タイトル
+          <br />
+          <input
+            type="text"
+            className="my-2 w-full rounded-sm border-gray-400 border-2 shadow-sm"
+            {...register('title')}
+          />
+        </label>
+        <br />
+        <label htmlFor="category">
+          カテゴリー
+          <br />
+          <input
+            type="text"
+            className="my-2 w-full rounded-sm border-gray-400 border-2 shadow-sm"
+            {...register('category')}
+          />
+        </label>
+        <br />
+        <label htmlFor="description">
+          説明
+          <br />
+          <textarea
+            rows={5}
+            className="my-2 w-full rounded-sm border-gray-400 border-2 shadow-sm"
+            {...register('description')}
+          ></textarea>
+        </label>
+        <br />
+        <label htmlFor="date">
+          期限日時
+          <br />
+          <input type="date" className="my-2 rounded-sm border-gray-400 border-2 shadow-sm" {...register('date')} />
+          &nbsp;&nbsp;
+          <WeekDayJa date={watchDate} isModal={true} />
+          &nbsp;&nbsp;
+          <DiffDays date={watchDate} isModal={true} />
+        </label>
+        <br />
+        <label>
+          マークを
+          <br />
+        </label>
+        <label>
+          <input type="radio" value={1} className="mr-2" {...register('markDiv')} />
+          ★（つける）
+          <br />
+        </label>
+        <label>
+          <input type="radio" value={0} defaultChecked className="mr-2" {...register('markDiv')} />
+          -（つけない）
+        </label>
+        <br />
+        <Button type="submit" className="mt-4 text-white bg-blue-500 hover:bg-blue-600">
+          作成
+        </Button>
+      </form>
+    </div>
   );
 };

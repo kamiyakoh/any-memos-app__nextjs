@@ -6,13 +6,22 @@ interface Props {
   addClassPanel: string;
   isOpen: boolean;
   enableCloseButton: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children: React.ReactNode;
 }
 
 export const Modal: FC<Props> = ({ addClassPanel, isOpen, enableCloseButton, onClose, children }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+    <Dialog
+      open={isOpen}
+      onClose={
+        onClose ??
+        (() => {
+          console.log();
+        })
+      }
+      className="relative z-50"
+    >
       <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
       <div className="fixed inset-0 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center">

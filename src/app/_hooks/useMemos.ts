@@ -12,7 +12,7 @@ import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from '../utils/c
 import { diffFromNowYD } from '../utils/date';
 import { queryKey } from '../utils/queryKey';
 
-import type { SortIdDate, PickDateDiff, PickMarkDiv, MemoData } from '../types';
+import type { SortIdDate, PickDateDiff, PickMarkDiv, MemoData } from '../_types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 
 interface UseMemos {

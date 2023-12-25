@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
@@ -5,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { menuOptionState } from 'app/_states/menuOptionState';
 import { bgImgOptions, bgFilterOptions } from 'app/_utils/const';
 
-import type { MenuOption } from 'app/types';
+import type { MenuOption } from '@@/app/_types';
 
 interface UseMenu {
   menuOption: MenuOption;

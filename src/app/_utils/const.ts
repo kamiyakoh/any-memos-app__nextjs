@@ -1,4 +1,4 @@
-import type { BgImg, BgFilter, SortIdDate, PickDateDiff, PickMarkDiv } from '../types';
+import type { BgImg, BgFilter, SortIdDate, PickDateDiff, PickMarkDiv } from '../_types';
 
 interface BgImgOptions {
   value: BgImg;

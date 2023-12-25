@@ -1,12 +1,14 @@
-import type { MemoData } from '../types';
-import type { UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+
+import { useCategory } from './useCategory';
 import { useLogin } from './useLogin';
 import { useMemos } from './useMemos';
-import { useCategory } from './useCategory';
 import { axiosInstance } from '../utils/axiosInstance';
+
+import type { MemoData } from '../_types';
+import type { UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 
 interface EditFormValues {
   id: string;
@@ -62,7 +64,7 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
             `ID：${id}\n
             タイトル：${prevTitle !== title ? prevTitle + ' ⇒ ' : ''}${title}\n
             カテゴリー：${prevCat !== category ? prevCat + ' ⇒ ' : ''}${category}\n
-            のメモを編集しました`,
+            のメモを編集しました`
           );
           closeModal();
         }
@@ -77,7 +79,7 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
         toast.error('エラーが発生しました');
       }
     },
-    [memo, addPickCategories, reset, refetchMemos, closeModal, handle401],
+    [memo, addPickCategories, reset, refetchMemos, closeModal, handle401]
   );
 
   return { watchDate, register, handleSubmit, editMemo };

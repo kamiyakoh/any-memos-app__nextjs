@@ -3,7 +3,7 @@ import { recoilPersist } from 'recoil-persist';
 
 import { recoilKey } from './recoilKey';
 
-import type { MenuOption } from '../types';
+import type { MenuOption } from '../_types';
 
 const { persistAtom } = recoilPersist();
 

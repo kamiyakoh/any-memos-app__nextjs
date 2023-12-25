@@ -18,7 +18,7 @@ const login: NextApiHandler = async (req, res) => {
     res.setHeader('token', token);
     res.setHeader('Set-Cookie', serialize('token', token, { maxAge: 24 * 60 * 60, path: '/' }));
     res.status(200).json({
-      token,
+      message: 'Login Success',
     });
   }
 };

@@ -1,21 +1,21 @@
 import { verify } from 'jsonwebtoken';
-import { NextApiRequest } from 'next';
+import { NextRequest } from 'next/server';
 
 interface AuthZ {
   status: number;
   error?: string;
 }
 
-export const authenticate = async (req: NextApiRequest): Promise<AuthZ> => {
-  if (req === undefined) {
+export const authorization = async (request: NextRequest): Promise<AuthZ> => {
+  if (request === undefined) {
     return { status: 500, error: 'Internal Server Error' };
   }
 
-  const reqAuthZ = req.headers.authorization;
+  const reqAuthZ = request.headers.get('authorization');
   const token = reqAuthZ?.split(' ')[1];
 
   if (reqAuthZ === undefined || reqAuthZ?.split(' ')[0] !== 'Bearer' || token === undefined) {
-    return { status: 401, error: 'undefined' };
+    return { status: 401, error: 'unauthorization' };
   }
 
   try {

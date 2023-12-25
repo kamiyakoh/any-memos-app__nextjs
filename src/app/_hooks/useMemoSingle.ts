@@ -1,9 +1,11 @@
-import type { MemoData } from '../types';
 import { useCallback } from 'react';
+import toast from 'react-hot-toast';
+
 import { useLogin } from './useLogin';
 import { useMemos } from './useMemos';
 import { axiosInstance } from '../utils/axiosInstance';
-import toast from 'react-hot-toast';
+
+import type { MemoData } from '../_types';
 
 interface UseMemo {
   openDel: (id: string) => void;
@@ -14,7 +16,7 @@ interface UseMemo {
 
 export const useMemoSingle = (
   currentIdOpenDel: string,
-  setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>,
+  setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>
 ): UseMemo => {
   const { handle401 } = useLogin();
   const { refetchMemos } = useMemos();
@@ -22,7 +24,7 @@ export const useMemoSingle = (
     (id: string): void => {
       setCurrentIdOpenDel(id);
     },
-    [setCurrentIdOpenDel],
+    [setCurrentIdOpenDel]
   );
   const closeDel = useCallback((): void => {
     setCurrentIdOpenDel('');
@@ -52,7 +54,7 @@ export const useMemoSingle = (
           toast.error('メモの削除に失敗しました');
         });
     },
-    [refetchMemos, setCurrentIdOpenDel, handle401],
+    [refetchMemos, setCurrentIdOpenDel, handle401]
   );
   const textFormatBr = useCallback((text: string): string => {
     if (text === '' || text === null) return '';

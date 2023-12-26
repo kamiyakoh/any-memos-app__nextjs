@@ -57,7 +57,7 @@ export const useLogin = (): UseLogin => {
 
   const login = async (email: string, password: string): Promise<string> => {
     try {
-      const response: AxiosResponse<string> = await axios.post('/api/login', {
+      const response: AxiosResponse<string> = await axios.post(`/api/login`, {
         email,
         password,
       });
@@ -73,14 +73,13 @@ export const useLogin = (): UseLogin => {
       const password = data.password;
       login(email, password)
         .then(() => {
-          setIsAuth(true);
           router.refresh();
         })
         .catch(() => {
           toast.error('メールアドレスまたは\nパスワードが違います');
         });
     },
-    [router, setIsAuth]
+    [router]
   );
 
   const handle401 = useCallback((): void => {

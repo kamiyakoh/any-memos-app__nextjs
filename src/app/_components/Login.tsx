@@ -9,11 +9,21 @@ export const Login: FC = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(handleLogin)}>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit(handleLogin)(event);
+        }}
+      >
         <label htmlFor="email">
           メールアドレス
           <br />
-          <input type="email" className="my-2 rounded-sm border-gray-400 border-2 shadow-sm" {...register('email')} />
+          <input
+            type="email"
+            required
+            className="my-2 rounded-sm border-gray-400 border-2 shadow-sm"
+            {...register('email')}
+          />
         </label>
         <br />
         <label htmlFor="password">
@@ -21,6 +31,7 @@ export const Login: FC = () => {
           <br />
           <input
             type="password"
+            required
             className="my-2 rounded-sm border-gray-400 border-2 shadow-sm"
             {...register('password')}
           />

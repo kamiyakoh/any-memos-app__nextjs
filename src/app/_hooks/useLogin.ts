@@ -1,5 +1,5 @@
 'use client';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
@@ -24,7 +24,7 @@ interface UseLogin {
   register: UseFormRegister<InputLogin>;
   handleSubmit: UseFormHandleSubmit<InputLogin>;
   fetchIsAuth: () => void;
-  handleLogin: (data: InputLogin) => void;
+  handleLogin: (data: InputLogin) => Promise<void>;
   handle401: () => void;
 }
 
@@ -39,7 +39,6 @@ export const useLogin = (): UseLogin => {
     },
   });
 
-  // useEffectとaxiosとMSWの組合せで発生するFireFoxのXHR_404_NotFonund問題に対処するためaxiosではなくfetchを使用
   const fetchIsAuth = useCallback((): void => {
     clientAxiosInstance
       .get('/api/memos')
@@ -55,29 +54,19 @@ export const useLogin = (): UseLogin => {
       });
   }, [setIsAuth]);
 
-  const login = async (email: string, password: string): Promise<string> => {
-    try {
-      const response: AxiosResponse<string> = await axios.post(`/api/login`, {
-        email,
-        password,
-      });
-      return response.data;
-    } catch (error) {
-      throw new Error('Login failed');
-    }
-  };
-
   const handleLogin = useCallback(
-    (data: InputLogin): void => {
+    async (data: InputLogin): Promise<void> => {
       const email = data.email;
       const password = data.password;
-      login(email, password)
-        .then(() => {
-          router.refresh();
-        })
-        .catch(() => {
-          toast.error('メールアドレスまたは\nパスワードが違います');
+      try {
+        await axios.post(`/api/login`, {
+          email,
+          password,
         });
+        router.refresh();
+      } catch (error) {
+        toast.error('メールアドレスまたは\nパスワードが違います');
+      }
     },
     [router]
   );

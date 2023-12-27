@@ -1,4 +1,3 @@
-import { serialize } from 'cookie';
 import { sign } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';

@@ -73,8 +73,8 @@ export const useLogin = (): UseLogin => {
 
   const handle401 = useCallback((): void => {
     toast.error('権限がありません\n再ログインしてください');
-    setIsAuth(false);
-  }, [setIsAuth]);
+    router.refresh();
+  }, [router]);
 
   return { isAuth, isLoading, setIsAuth, register, handleSubmit, handleLogin, fetchIsAuth, handle401 };
 };

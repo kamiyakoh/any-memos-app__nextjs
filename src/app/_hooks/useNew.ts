@@ -3,7 +3,7 @@ import { useForm, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 // import { useCategory } from './useCategory';
-import { dbAxiosInstance } from 'app/_utils/axiosInstance';
+import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 
 import { useLogin } from './useLogin';
 // import { useMemos } from './useMemos';
@@ -41,7 +41,7 @@ export const useNew = (): UseNew => {
       const { title, category, description, date, markDiv } = data;
 
       try {
-        const res = await dbAxiosInstance.post('/memo', {
+        const res = await clientAxiosInstance.post('/api/memo', {
           title,
           category,
           description,
@@ -50,23 +50,36 @@ export const useNew = (): UseNew => {
         });
 
         if (res.status === 200) {
-          await refetchMemos();
+          // await refetchMemos();
           // addPickCategories(category);
           reset();
           toast.success('新しいメモを作成しました');
         }
-        if (res.status === 401) {
-          handle401();
-        }
-        if (res.status === 400) {
-          const responseError = res.data as { errorMessage: string };
-          toast.error(responseError.errorMessage);
-        }
       } catch (error) {
-        toast.error('エラーが発生しました');
+        if (error.response !== undefined) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          const { status, data } = error.response as { status: number; data: string };
+
+          if (status === 401) {
+            console.log('Unauthorized: 401');
+            handle401();
+          } else if (status === 400) {
+            toast.error(data);
+          } else {
+            console.log('Unexpected Error:', status);
+            toast.error('エラーが発生しました');
+          }
+        } else if (error.request !== undefined) {
+          console.log('No response received');
+          toast.error('エラーが発生しました');
+        } else {
+          console.log('Error setting up the request:', error.message);
+          toast.error('エラーが発生しました');
+        }
       }
     },
-    [addPickCategories, reset, refetchMemos, handle401]
+    [reset, handle401]
   );
 
   return { watchDate, register, handleSubmit, postMemo };

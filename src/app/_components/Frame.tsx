@@ -5,7 +5,11 @@ import { Contents } from './Contents';
 import { useFrame } from '../_hooks/useFrame';
 import { useMenu } from '../_hooks/useMenu';
 
-export const Frame: FC = () => {
+interface Props {
+  isAuthZ: boolean;
+}
+
+export const Frame: FC<Props> = ({ isAuthZ }) => {
   const { bgImg, bgFilter } = useFrame();
   const { isShowBgPreview, onClickShowBgPreview, onClickCloseBgPreview } = useMenu();
 
@@ -20,7 +24,7 @@ export const Frame: FC = () => {
       >
         {isShowBgPreview && <button className="w-full h-full" onClick={onClickCloseBgPreview} />}
       </div>
-      <Contents isShowBgPreview={isShowBgPreview} onClickShowBgPreview={onClickShowBgPreview} />
+      {isAuthZ && <Contents isShowBgPreview={isShowBgPreview} onClickShowBgPreview={onClickShowBgPreview} />}
     </div>
   );
 };

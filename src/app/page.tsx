@@ -11,7 +11,7 @@ const Home: FC = async () => {
 
   return (
     <div>
-      <Frame />
+      <Frame isAuthZ={isAuthZ} />
       <Modal addClassPanel="border-violet-500" isOpen={!isAuthZ} enableCloseButton={false}>
         <Login />
       </Modal>

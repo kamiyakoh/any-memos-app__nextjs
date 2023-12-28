@@ -1,8 +1,8 @@
-import { WeekDayJa } from 'app/_components/uiParts/WeekDayJa';
 import { FC } from 'react';
 
 import { DiffDays } from 'app/_components//DiffDays';
 import { Button } from 'app/_components/uiParts/Button';
+import { WeekDayJa } from 'app/_components/uiParts/WeekDayJa';
 import { useNew } from 'app/_hooks/useNew';
 
 export const New: FC = () => {
@@ -10,7 +10,12 @@ export const New: FC = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(postMemo)}>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit(postMemo)(event);
+        }}
+      >
         <label htmlFor="title">
           タイトル
           <br />

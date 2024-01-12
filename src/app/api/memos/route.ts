@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { MemoData } from '@@/app/_types';
+import { MemoData } from 'app/_types';
 import { authorization } from 'app/api/authorization';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   if (authZ.status === 200) {
     try {
-      const memosResponse = await fetch(`${process.env.DB_HOST}/memos`, { cache: 'no-store' });
+      const memosResponse = await fetch(`${process.env.DB_HOST}/memos`);
 
       if (!memosResponse.ok) {
         throw new Error(`Failed to fetch memos. Status: ${memosResponse.status}`);

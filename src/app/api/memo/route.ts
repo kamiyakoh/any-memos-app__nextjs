@@ -25,7 +25,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const prevMemos = (await dbAxiosInstance.get('/memos')).data as MemoData[];
       const resMemo = (
         await dbAxiosInstance.post('/memos', {
-          id: prevMemos.length.toString(),
+          id: (parseInt(prevMemos.pop()?.id ?? '0') + 1).toString(),
           title,
           category,
           description,

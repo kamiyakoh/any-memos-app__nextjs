@@ -1,12 +1,13 @@
+import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useForm, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-// import { useCategory } from './useCategory';
+import { useCategory } from 'app/_hooks/useCategory';
 import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 
 import { useLogin } from './useLogin';
-// import { useMemos } from './useMemos';
+import { useMemos } from './useMemos';
 
 export interface FormValues {
   title: string;
@@ -24,8 +25,9 @@ interface UseNew {
 
 export const useNew = (): UseNew => {
   const { handle401 } = useLogin();
-  // const { refetchMemos } = useMemos();
-  // const { addPickCategories } = useCategory();
+  const router = useRouter();
+  const { refetchMemos } = useMemos();
+  const { addPickCategories } = useCategory();
   const { register, handleSubmit, watch, reset } = useForm<FormValues>({
     defaultValues: {
       title: '',
@@ -50,10 +52,11 @@ export const useNew = (): UseNew => {
         });
 
         if (res.status === 200) {
-          // await refetchMemos();
-          // addPickCategories(category);
+          await refetchMemos();
+          addPickCategories(category);
           reset();
           toast.success('新しいメモを作成しました');
+          // router.refresh();
         }
       } catch (error) {
         if (error.response !== undefined) {
@@ -79,7 +82,7 @@ export const useNew = (): UseNew => {
         }
       }
     },
-    [reset, handle401]
+    [reset, handle401, router, addPickCategories, refetchMemos]
   );
 
   return { watchDate, register, handleSubmit, postMemo };

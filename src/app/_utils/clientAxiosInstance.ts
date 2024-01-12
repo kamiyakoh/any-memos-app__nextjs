@@ -1,3 +1,4 @@
+'use client';
 import axios from 'axios';
 
 export const clientAxiosInstance = axios.create({
@@ -6,8 +7,10 @@ export const clientAxiosInstance = axios.create({
 });
 
 clientAxiosInstance.interceptors.request.use((config) => {
-  const token = document.cookie ?? ''.split('; ').find((row) => row.startsWith('token'));
-  const tokenValue = token.split('=')[1];
-  config.headers.Authorization = `Bearer ${tokenValue}`;
+  if (typeof document !== 'undefined') {
+    const token = document.cookie ?? ''.split('; ').find((row) => row.startsWith('token'));
+    const tokenValue = token.split('=')[1];
+    config.headers.Authorization = `Bearer ${tokenValue}`;
+  }
   return config;
 });

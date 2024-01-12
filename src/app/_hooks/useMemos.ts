@@ -1,19 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryObserverResult, useSuspenseQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useRecoilState, useRecoilValue } from 'recoil';
+// import useSWR, { KeyedMutator } from 'swr';
 
-import { useLogin } from './useLogin';
-import { categoriesState } from '../_states/categories';
-import { pickCategoriesState } from '../_states/pickCategoriesState';
-import { axiosInstance } from '../utils/axiosInstance';
-import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from '../utils/const';
-import { diffFromNowYD } from '../utils/date';
-import { queryKey } from '../utils/queryKey';
-
-import type { SortIdDate, PickDateDiff, PickMarkDiv, MemoData } from '../_types';
-import type { QueryObserverResult } from '@tanstack/react-query';
+import { useLogin } from 'app/_hooks/useLogin';
+import { categoriesState } from 'app/_states/categories';
+import { pickCategoriesState } from 'app/_states/pickCategoriesState';
+import { SortIdDate, PickDateDiff, PickMarkDiv, MemoData } from 'app/_types';
+import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
+import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from 'app/_utils/const';
+import { diffFromNowYD } from 'app/_utils/date';
+import { queryKey } from 'app/_utils/queryKey';
 
 interface UseMemos {
   currentIdOpenDel: string;
@@ -25,11 +24,12 @@ interface UseMemos {
   categories: string[];
   setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>;
   fetchMemos: () => Promise<MemoData[]>;
+  // mutate: KeyedMutator<MemoData[]>;
   refetchMemos: () => Promise<QueryObserverResult<MemoData[], unknown>>;
   handleSortIdDateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePickDiffChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleMarkDivChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  showMemosDel: () => void;
+  showMemosDel: () => Promise<void>;
 }
 
 export const useMemos = (): UseMemos => {
@@ -42,22 +42,29 @@ export const useMemos = (): UseMemos => {
   const { handle401 } = useLogin();
 
   const fetchMemos = async (): Promise<MemoData[]> => {
-    const result = await axiosInstance.get<{ memos: MemoData[] }>('/memos');
-    const memos = result.data.memos ?? [];
-    if (result.status === 200) {
-      const memosCat = memos.map((memo) => memo.category).sort() ?? [];
-      const uniqueCat = [...new Set(memosCat)];
-      setCategories(uniqueCat);
+    if (typeof document !== 'undefined') {
+      return await clientAxiosInstance.get<MemoData[]>('/api/memos').then((res) => {
+        const memos = res.data ?? [];
+        if (res.status === 200) {
+          const memosCat = memos.map((memo) => memo.category).sort() ?? [];
+          const uniqueCat = [...new Set(memosCat)];
+          setCategories(uniqueCat);
+        }
+        return memos;
+      });
     }
-    return memos;
+    return [];
   };
 
-  const queryMemos = useQuery<MemoData[]>([queryKey.memos], fetchMemos, {
+  const queryMemos = useSuspenseQuery<MemoData[]>({
+    queryKey: [queryKey.memos],
+    queryFn: fetchMemos,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
   const memos = queryMemos.data;
   const refetchMemos = queryMemos.refetch;
+  // const { data: memos, mutate } = useSWR('/api/memos', fetchMemos);
 
   const sortMemos = useCallback((memos: MemoData[], sortIdDate: SortIdDate): MemoData[] => {
     return memos.sort((a, b) => {
@@ -149,7 +156,7 @@ export const useMemos = (): UseMemos => {
 
     if (confirm(`表示中の${delIds.length}件のメモを本当にまとめて削除しますか？`)) {
       try {
-        const res = await axiosInstance.get('/memos');
+        const res = await clientAxiosInstance.get('/api/memos');
 
         if (res.status === 200) {
           let success = 0;
@@ -157,7 +164,9 @@ export const useMemos = (): UseMemos => {
 
           const deleteMemo = async (id: number): Promise<void> => {
             try {
-              const res = await axiosInstance.delete<MemoData | { errorMessage: string }>(`/memo/${id.toString()}`);
+              const res = await clientAxiosInstance.delete<MemoData | { errorMessage: string }>(
+                `/api/memo/${id.toString()}`
+              );
               if (res.status === 200) {
                 success++;
               } else {
@@ -176,7 +185,7 @@ export const useMemos = (): UseMemos => {
           toast(`${success > 0 ? success.toString() + '件のメモを削除しました\n' : ''}
             ${error > 0 ? error.toString() + '件のメモが削除できませんでした' : ''}`);
 
-          await refetchMemos();
+          // await refetchMemos();
           setCurrentIdOpenDel('');
         }
         if (res.status === 401) {
@@ -186,7 +195,7 @@ export const useMemos = (): UseMemos => {
         console.error('Error fetching memos:', err);
       }
     }
-  }, [showMemos, handle401, refetchMemos]);
+  }, [showMemos, handle401]);
 
   return {
     currentIdOpenDel,
@@ -198,6 +207,7 @@ export const useMemos = (): UseMemos => {
     categories,
     setCurrentIdOpenDel,
     fetchMemos,
+    // mutate,
     refetchMemos,
     handleSortIdDateChange,
     handlePickDiffChange,

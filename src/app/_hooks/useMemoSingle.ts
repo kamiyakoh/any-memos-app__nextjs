@@ -1,16 +1,17 @@
 import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
-import { useLogin } from './useLogin';
-import { useMemos } from './useMemos';
-import { axiosInstance } from '../utils/axiosInstance';
+import { useLogin } from 'app/_hooks/useLogin';
+import { useMemos } from 'app/_hooks/useMemos';
+import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 
 import type { MemoData } from '../_types';
 
 interface UseMemo {
   openDel: (id: string) => void;
   closeDel: () => void;
-  delMemo: (id: string) => void;
+  // delMemo: (id: string) => void;
+  delMemo: (id: string) => Promise<void>;
   textFormatBr: (text: string) => string;
 }
 
@@ -29,10 +30,10 @@ export const useMemoSingle = (
   const closeDel = useCallback((): void => {
     setCurrentIdOpenDel('');
   }, [setCurrentIdOpenDel]);
-  const delMemo = useCallback(
+  /*   const delMemo = useCallback(
     (id: string): void => {
-      axiosInstance
-        .delete<MemoData | { errorMessage: string }>(`/memo/${id}`)
+      clientAxiosInstance
+        .delete<MemoData | { errorMessage: string }>(`/api/memo/${id}`)
         .then(async (res) => {
           if (res.status === 200) {
             await refetchMemos();
@@ -53,6 +54,29 @@ export const useMemoSingle = (
         .catch(() => {
           toast.error('メモの削除に失敗しました');
         });
+    },
+    [refetchMemos, setCurrentIdOpenDel, handle401]
+  ); */
+  const delMemo = useCallback(
+    async (id: string): Promise<void> => {
+      try {
+        const res = await clientAxiosInstance.delete<MemoData | { errorMessage: string }>(`/api/memoTest/${id}`);
+        if (res.status === 200) {
+          await refetchMemos();
+          setCurrentIdOpenDel('');
+          const { title, category } = res.data as MemoData;
+          toast(`タイトル: ${title}\n${category !== '' ? 'カテゴリー:' + category + '\n' : ''}のメモを削除しました`, {
+            icon: '🚮',
+          });
+        } else if (res.status === 401) {
+          handle401();
+        } else if (res.status === 400) {
+          const responseError = res.data as { errorMessage: string };
+          toast.error(responseError.errorMessage);
+        }
+      } catch (error) {
+        toast.error('メモの削除に失敗しました');
+      }
     },
     [refetchMemos, setCurrentIdOpenDel, handle401]
   );

@@ -1,106 +1,105 @@
 'use client';
-import { FC, useState, useEffect, useRef } from 'react';
+// import { Edit } from 'app/_components/Edit';
+import { FC, useState } from 'react';
 
-import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
-import { MemoData } from 'pages/api/types';
+import { DiffDays } from 'app/_components/DiffDays';
+import { Button } from 'app/_components/uiParts/Button';
+import { FrostedGlass } from 'app/_components/uiParts/FrostedGlass';
+import { Modal } from 'app/_components/uiParts/Modal';
+import { WeekDayJa } from 'app/_components/uiParts/WeekDayJa';
+import { useMemoSingle } from 'app/_hooks/useMemoSingle';
+import { MemoData } from 'app/_types';
+import { jaDay } from 'app/_utils/date';
+
 interface Props {
   memo: MemoData;
+  currentIdOpenDel: string;
+  setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const Memo: FC<Props> = ({ memo }) => {
-  const { id, title } = memo;
-  const ref = useRef<HTMLInputElement>(null);
-  const [isEdit, setIsEdit] = useState(false);
-  const [editTitle, setEditTitle] = useState(title);
-  const onClickEdit = (): void => {
-    setIsEdit(true);
-  };
-  const editHandle = async (editTitle: string): Promise<MemoData> => {
-    try {
-      const response = await clientAxiosInstance.put(`/api/memo/${id}`, {
-        id,
-        title: editTitle,
-      });
-      return response.data as MemoData;
-    } catch {
-      throw new Error('Login failed');
-    }
-  };
-  const onSubmit = (): void => {
-    editHandle(editTitle)
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsEdit(false);
-      });
-  };
-
-  const deleteHandle = async (): Promise<MemoData> => {
-    try {
-      const response = await clientAxiosInstance.delete(`/api/memo/${id}`);
-      return response.data as MemoData;
-    } catch {
-      throw new Error('Login failed');
-    }
-  };
-  const onClickDel = (): void => {
-    deleteHandle()
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  useEffect(() => {
-    if (isEdit) {
-      ref.current?.focus();
-    }
-  }, [isEdit]);
+export const Memo: FC<Props> = ({ memo, currentIdOpenDel, setCurrentIdOpenDel }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { openDel, closeDel, delMemo, textFormatBr } = useMemoSingle(currentIdOpenDel, setCurrentIdOpenDel);
 
   return (
-    <div>
-      <p>id:{memo.id}</p>
-      {isEdit ? (
-        <label htmlFor="editTitle">
-          title:{' '}
-          <input
-            type="text"
-            ref={ref}
-            value={editTitle}
-            onChange={(e) => {
-              setEditTitle(e.target.value);
-            }}
-          />
-        </label>
-      ) : (
-        <p>title:{title}</p>
-      )}
-      <div className="mt-4">
-        {isEdit ? (
-          <button
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              onSubmit();
-            }}
-            className="text-white bg-orange-500 p-2"
-          >
-            上書き
-          </button>
-        ) : (
-          <button type="button" onClick={onClickEdit} className="text-white bg-green-500 p-2">
-            編集
-          </button>
+    <FrostedGlass
+      className={'flex flex-col justify-between break-words whitespace-pre-wrap w-full md:w-[calc(50%_-_0.5rem)]'}
+    >
+      <div className="space-y-2">
+        <div className="flex gap-x-2">
+          <h2>ID： {memo.id}</h2>
+        </div>
+        <h2>タイトル： {memo.title}</h2>
+        <p>カテゴリー： {memo.category}</p>
+        <div className="flex flex-wrap gap-x-2">
+          <p>詳細説明：</p>
+          <div className="max-w-full" dangerouslySetInnerHTML={{ __html: textFormatBr(memo.description) }} />
+        </div>
+        <p>
+          期限日時： {jaDay(memo.date).format('YYYY/MM/DD')}&nbsp;
+          <WeekDayJa date={memo.date} isModal={false} />
+          &nbsp;
+          <DiffDays date={memo.date} isModal={false} />
+        </p>
+        {memo.markDiv === 1 && (
+          <span className="block text-4xl font-extrabold" style={{ lineHeight: 1 }}>
+            ★
+          </span>
         )}
-        <button type="button" onClick={onClickDel} className="text-white bg-red-500 p-2 ml-4">
-          削除
-        </button>
       </div>
-    </div>
+      <div className="flex justify-between mt-4">
+        {isOpen ? (
+          <div />
+        ) : (
+          <Button
+            type="button"
+            className="bg-green-600 hover:bg-green-700"
+            onClick={() => {
+              setIsOpen(true);
+            }}
+          >
+            編集
+          </Button>
+        )}
+        <div>
+          {currentIdOpenDel === memo.id ? (
+            <div className="flex gap-x-4">
+              <Button
+                type="button"
+                className="bg-red-700 hover:bg-red-800"
+                onClick={() => {
+                  void delMemo(memo.id);
+                }}
+              >
+                本当に削除
+              </Button>
+              <Button type="button" className="bg-gray-500 hover:bg-gray-600" onClick={closeDel}>
+                キャンセル
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              className="bg-red-500 hover:bg-red-600"
+              onClick={() => {
+                openDel(memo.id);
+              }}
+            >
+              削除
+            </Button>
+          )}
+        </div>
+      </div>
+      <Modal
+        addClassPanel="border-green-600 w-full"
+        isOpen={isOpen}
+        enableCloseButton
+        onClose={() => {
+          setIsOpen(false);
+        }}
+      >
+        <p>Edit</p>
+      </Modal>
+    </FrostedGlass>
   );
 };

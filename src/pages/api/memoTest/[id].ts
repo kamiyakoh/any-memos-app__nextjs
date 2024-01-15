@@ -1,12 +1,12 @@
 import { NextApiHandler } from 'next';
 
 import { dbAxiosInstance } from 'app/_utils/axiosInstance';
+// import { authorization } from 'app/api/authorization';
 
-import { authenticate } from '../authenticate';
 import { MemoData } from '../types';
 
 const editMemo: NextApiHandler = async (req, res) => {
-  const authZ = await authenticate(req);
+  /*   const authZ = await authorization(req);
 
   if (!(req.method === 'PUT' || req.method === 'DELETE') || authZ.status === 500) {
     res.status(500).json({ error: authZ.error });
@@ -38,16 +38,17 @@ const editMemo: NextApiHandler = async (req, res) => {
       } catch (error) {
         res.status(500).json({ error });
       }
-    }
-    if (req.method === 'DELETE') {
-      console.log('a');
-      try {
-        const resMemo = (await dbAxiosInstance.delete(`/memos/${id}`)).data as MemoData;
-        res.json(resMemo);
-      } catch (error) {
-        res.status(500).json({ error });
-      }
+    } */
+  if (req.method === 'DELETE') {
+    // console.log('a');
+    try {
+      const id = req.query.id as string;
+      const resMemo = (await dbAxiosInstance.delete(`/memos/${id}`)).data as MemoData;
+      res.json(resMemo);
+    } catch (error) {
+      res.status(500).json({ error });
     }
   }
 };
+// };
 export default editMemo;

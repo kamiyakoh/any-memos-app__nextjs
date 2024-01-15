@@ -29,7 +29,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   return NextResponse.json('Internal Server Error', { status: 500 });
 }
 
-/* export async function PUT(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
   const authZ = await authorization(req);
 
   if (authZ.status === 500) {
@@ -66,4 +66,3 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
   return NextResponse.json('Internal Server Error', { status: 500 });
 }
- */

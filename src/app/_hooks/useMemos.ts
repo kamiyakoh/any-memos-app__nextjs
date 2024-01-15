@@ -43,13 +43,29 @@ export const useMemos = (): UseMemos => {
 
   const fetchMemos = async (): Promise<MemoData[]> => {
     if (typeof document !== 'undefined') {
-      return await clientAxiosInstance.get<MemoData[]>('/api/memos').then((res) => {
+      /*       return await clientAxiosInstance.get<MemoData[]>('/api/memos').then((res) => {
         const memos = res.data ?? [];
         if (res.status === 200) {
           const memosCat = memos.map((memo) => memo.category).sort() ?? [];
           const uniqueCat = [...new Set(memosCat)];
           setCategories(uniqueCat);
         }
+        return memos;
+      }); */
+      const token = document.cookie ?? ''.split('; ').find((row) => row.startsWith('token'));
+      const tokenValue = token.split('=')[1];
+      return await fetch(`/api/memos`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${tokenValue}`,
+        },
+        cache: 'no-cache',
+      }).then(async (res) => {
+        const memos = (await res.json()) as MemoData[];
+        const memosCat = memos.map((memo) => memo.category).sort() ?? [];
+        const uniqueCat = [...new Set(memosCat)];
+        setCategories(uniqueCat);
         return memos;
       });
     }
@@ -59,7 +75,7 @@ export const useMemos = (): UseMemos => {
   const queryMemos = useSuspenseQuery<MemoData[]>({
     queryKey: [queryKey.memos],
     queryFn: fetchMemos,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     refetchOnMount: false,
   });
   const memos = queryMemos.data;
@@ -185,7 +201,7 @@ export const useMemos = (): UseMemos => {
           toast(`${success > 0 ? success.toString() + '件のメモを削除しました\n' : ''}
             ${error > 0 ? error.toString() + '件のメモが削除できませんでした' : ''}`);
 
-          // await refetchMemos();
+          await refetchMemos();
           setCurrentIdOpenDel('');
         }
         if (res.status === 401) {
@@ -195,7 +211,7 @@ export const useMemos = (): UseMemos => {
         console.error('Error fetching memos:', err);
       }
     }
-  }, [showMemos, handle401]);
+  }, [showMemos, handle401, refetchMemos]);
 
   return {
     currentIdOpenDel,

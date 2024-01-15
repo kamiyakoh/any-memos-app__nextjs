@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { useCategory } from './useCategory';
-import { useLogin } from './useLogin';
-import { useMemos } from './useMemos';
-import { axiosInstance } from '../utils/axiosInstance';
+import { useCategory } from 'app/_hooks/useCategory';
+import { useLogin } from 'app/_hooks/useLogin';
+import { useMemos } from 'app/_hooks/useMemos';
+import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 
 import type { MemoData } from '../_types';
 import type { UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
@@ -45,7 +45,7 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
       const { id, title, category, description, date, markDiv } = data;
 
       try {
-        const res = await axiosInstance.put(`/memo/${id}`, {
+        const res = await clientAxiosInstance.put(`/api/memo/${id}`, {
           id,
           title,
           category,

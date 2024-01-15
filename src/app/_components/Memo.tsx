@@ -3,6 +3,7 @@
 import { FC, useState } from 'react';
 
 import { DiffDays } from 'app/_components/DiffDays';
+import { Edit } from 'app/_components/Edit';
 import { Button } from 'app/_components/uiParts/Button';
 import { FrostedGlass } from 'app/_components/uiParts/FrostedGlass';
 import { Modal } from 'app/_components/uiParts/Modal';
@@ -98,7 +99,12 @@ export const Memo: FC<Props> = ({ memo, currentIdOpenDel, setCurrentIdOpenDel })
           setIsOpen(false);
         }}
       >
-        <p>Edit</p>
+        <Edit
+          memo={memo}
+          closeModal={() => {
+            setIsOpen(false);
+          }}
+        />
       </Modal>
     </FrostedGlass>
   );

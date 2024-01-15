@@ -13,6 +13,7 @@ import { useMemos } from 'app/_hooks/useMemos';
 import { pickCategoriesState } from 'app/_states/pickCategoriesState';
 
 import { Category } from './Category';
+import { CLog } from './ConsoleLogForServerSide';
 // import { TestMemos } from './TestMemos';
 import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from '../_utils/const';
 
@@ -27,6 +28,7 @@ export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const setPickCatategories = useSetRecoilState(pickCategoriesState);
   const {
+    memos,
     currentIdOpenDel,
     sortIdDate,
     pickDateDiff,
@@ -46,6 +48,7 @@ export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
 
   return (
     <div className="w-full px-[5%] pb-[5.5rem] md:mt-[-4.5rem]">
+      <CLog props={[memos]} />
       {isOpenNew || (
         <button
           className={`fixed top-4 left-4 z-40 text-4xl px-4 h-16 bg-blue-500 text-white rounded hover:bg-blue-600 min-[1936px]:left-[calc((100%_-_1920px)_/_2)]`}

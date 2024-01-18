@@ -1,12 +1,3 @@
 {
-  "memos": [
-    {
-      "id": "6",
-      "title": "testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
-      "category": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
-      "description": "",
-      "date": "2024-02-10",
-      "markDiv": 0
-    }
-  ]
+  "memos": []
 }

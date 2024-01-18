@@ -1,5 +1,4 @@
 'use client';
-// import { Edit } from 'app/_components/Edit';
 import { FC, useState } from 'react';
 
 import { DiffDays } from 'app/_components/DiffDays';
@@ -20,7 +19,7 @@ interface Props {
 
 export const Memo: FC<Props> = ({ memo, currentIdOpenDel, setCurrentIdOpenDel }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { openDel, closeDel, delMemo, textFormatBr } = useMemoSingle(currentIdOpenDel, setCurrentIdOpenDel);
+  const { openDel, closeDel, delMemo, textFormatBr } = useMemoSingle(setCurrentIdOpenDel);
 
   return (
     <FrostedGlass

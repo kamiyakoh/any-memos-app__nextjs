@@ -52,14 +52,6 @@ export const useMemos = (): UseMemos => {
     return [];
   };
 
-  /*   const queryMemos = useSuspenseQuery<MemoData[]>({
-    queryKey: [queryKey.memos],
-    queryFn: fetchMemos,
-    refetchOnWindowFocus: true,
-    refetchOnMount: false,
-  });
-  const memos = queryMemos.data;
-  const refetchMemos = queryMemos.refetch; */
   const { data: memos, isLoading } = useSWR('/api/memos', fetchMemos);
 
   const sortMemos = useCallback((memos: MemoData[], sortIdDate: SortIdDate): MemoData[] => {
@@ -180,8 +172,6 @@ export const useMemos = (): UseMemos => {
 
           toast(`${success > 0 ? success.toString() + '件のメモを削除しました\n' : ''}
             ${error > 0 ? error.toString() + '件のメモが削除できませんでした' : ''}`);
-
-          // await refetchMemos();
           await mutate('/api/memos');
           setCurrentIdOpenDel('');
         }

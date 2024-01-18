@@ -1,9 +1,9 @@
 'use client';
 import { FC, useState, useEffect } from 'react';
 
-import { Contents } from './Contents';
-import { useFrame, BgBrend } from '../_hooks/useFrame';
-import { useMenu } from '../_hooks/useMenu';
+import { Contents } from 'app/_components/Contents';
+import { useFrame, BgBrend } from 'app/_hooks/useFrame';
+import { useMenu } from 'app/_hooks/useMenu';
 
 interface Props {
   isAuthZ: boolean;

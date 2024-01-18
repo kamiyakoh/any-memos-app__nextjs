@@ -136,7 +136,9 @@ export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
                 ? 'bg-red-500 hover:bg-red-600 pointer-events-auto'
                 : 'bg-gray-500 pointer-events-none'
             }`}
-            onClick={() => showMemosDel}
+            onClick={() => {
+              void showMemosDel();
+            }}
           >
             まとめて削除
           </Button>

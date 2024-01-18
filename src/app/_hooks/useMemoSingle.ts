@@ -15,7 +15,7 @@ interface UseMemo {
 }
 
 export const useMemoSingle = (
-  currentIdOpenDel: string,
+  // currentIdOpenDel: string,
   setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>
 ): UseMemo => {
   const { mutate } = useSWRConfig();
@@ -32,7 +32,7 @@ export const useMemoSingle = (
   const delMemo = useCallback(
     async (id: string): Promise<void> => {
       try {
-        const res = await clientAxiosInstance.delete<MemoData | { errorMessage: string }>(`/api/memoTest/${id}`);
+        const res = await clientAxiosInstance.delete<MemoData | { errorMessage: string }>(`/api/memo/${id}`);
         if (res.status === 200) {
           await mutate('/api/memos');
           setCurrentIdOpenDel('');

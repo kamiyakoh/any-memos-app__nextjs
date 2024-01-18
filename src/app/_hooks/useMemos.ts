@@ -1,9 +1,8 @@
-import { QueryObserverResult, useSuspenseQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useRecoilState, useRecoilValue } from 'recoil';
-// import useSWR, { KeyedMutator } from 'swr';
+import useSWR, { mutate } from 'swr';
 
 import { useLogin } from 'app/_hooks/useLogin';
 import { categoriesState } from 'app/_states/categories';
@@ -12,20 +11,17 @@ import { SortIdDate, PickDateDiff, PickMarkDiv, MemoData } from 'app/_types';
 import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
 import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from 'app/_utils/const';
 import { diffFromNowYD } from 'app/_utils/date';
-import { queryKey } from 'app/_utils/queryKey';
 
 interface UseMemos {
   currentIdOpenDel: string;
   sortIdDate: SortIdDate;
   pickDateDiff: PickDateDiff;
   pickMarkDiv: PickMarkDiv;
+  isLoading: boolean;
   memos?: MemoData[];
   showMemos?: MemoData[];
   categories: string[];
   setCurrentIdOpenDel: React.Dispatch<React.SetStateAction<string>>;
-  fetchMemos: () => Promise<MemoData[]>;
-  // mutate: KeyedMutator<MemoData[]>;
-  refetchMemos: () => Promise<QueryObserverResult<MemoData[], unknown>>;
   handleSortIdDateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handlePickDiffChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleMarkDivChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,9 +37,9 @@ export const useMemos = (): UseMemos => {
   const pickCategories = useRecoilValue(pickCategoriesState);
   const { handle401 } = useLogin();
 
-  const fetchMemos = async (): Promise<MemoData[]> => {
+  const fetchMemos = async (url: string): Promise<MemoData[]> => {
     if (typeof document !== 'undefined') {
-      /*       return await clientAxiosInstance.get<MemoData[]>('/api/memos').then((res) => {
+      return await clientAxiosInstance.get<MemoData[]>(url).then((res) => {
         const memos = res.data ?? [];
         if (res.status === 200) {
           const memosCat = memos.map((memo) => memo.category).sort() ?? [];
@@ -51,36 +47,20 @@ export const useMemos = (): UseMemos => {
           setCategories(uniqueCat);
         }
         return memos;
-      }); */
-      const token = document.cookie ?? ''.split('; ').find((row) => row.startsWith('token'));
-      const tokenValue = token.split('=')[1];
-      return await fetch(`/api/memos`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokenValue}`,
-        },
-        cache: 'no-cache',
-      }).then(async (res) => {
-        const memos = (await res.json()) as MemoData[];
-        const memosCat = memos.map((memo) => memo.category).sort() ?? [];
-        const uniqueCat = [...new Set(memosCat)];
-        setCategories(uniqueCat);
-        return memos;
       });
     }
     return [];
   };
 
-  const queryMemos = useSuspenseQuery<MemoData[]>({
+  /*   const queryMemos = useSuspenseQuery<MemoData[]>({
     queryKey: [queryKey.memos],
     queryFn: fetchMemos,
     refetchOnWindowFocus: true,
     refetchOnMount: false,
   });
   const memos = queryMemos.data;
-  const refetchMemos = queryMemos.refetch;
-  // const { data: memos, mutate } = useSWR('/api/memos', fetchMemos);
+  const refetchMemos = queryMemos.refetch; */
+  const { data: memos, isLoading } = useSWR('/api/memos', fetchMemos);
 
   const sortMemos = useCallback((memos: MemoData[], sortIdDate: SortIdDate): MemoData[] => {
     return memos.sort((a, b) => {
@@ -201,7 +181,8 @@ export const useMemos = (): UseMemos => {
           toast(`${success > 0 ? success.toString() + '件のメモを削除しました\n' : ''}
             ${error > 0 ? error.toString() + '件のメモが削除できませんでした' : ''}`);
 
-          await refetchMemos();
+          // await refetchMemos();
+          await mutate('/api/memos');
           setCurrentIdOpenDel('');
         }
         if (res.status === 401) {
@@ -211,20 +192,18 @@ export const useMemos = (): UseMemos => {
         console.error('Error fetching memos:', err);
       }
     }
-  }, [showMemos, handle401, refetchMemos]);
+  }, [showMemos, handle401]);
 
   return {
     currentIdOpenDel,
     sortIdDate,
     pickDateDiff,
     pickMarkDiv,
+    isLoading,
     memos,
     showMemos,
     categories,
     setCurrentIdOpenDel,
-    fetchMemos,
-    // mutate,
-    refetchMemos,
     handleSortIdDateChange,
     handlePickDiffChange,
     handleMarkDivChange,

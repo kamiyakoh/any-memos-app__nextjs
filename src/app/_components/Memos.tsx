@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { FC, useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
+import { Category } from 'app/_components/Category';
 import { Memo } from 'app/_components/Memo';
 import { Menu } from 'app/_components/Menu';
 import { New } from 'app/_components/New';
@@ -11,11 +12,7 @@ import { FrostedGlass } from 'app/_components/uiParts/FrostedGlass';
 import { Modal } from 'app/_components/uiParts/Modal';
 import { useMemos } from 'app/_hooks/useMemos';
 import { pickCategoriesState } from 'app/_states/pickCategoriesState';
-
-import { Category } from './Category';
-import { CLog } from './ConsoleLogForServerSide';
-// import { TestMemos } from './TestMemos';
-import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from '../_utils/const';
+import { sortIdDateRadio, pickDateDiffRadio, pickMarkDivRadio } from 'app/_utils/const';
 
 interface Props {
   isShowBgPreview: boolean;
@@ -23,16 +20,17 @@ interface Props {
 }
 
 export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
   const [isOpenNew, setIsOpenNew] = useState<boolean>(false);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const setPickCatategories = useSetRecoilState(pickCategoriesState);
   const {
-    memos,
     currentIdOpenDel,
     sortIdDate,
     pickDateDiff,
     pickMarkDiv,
+    isLoading,
     showMemos,
     categories,
     setCurrentIdOpenDel,
@@ -43,12 +41,14 @@ export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
   } = useMemos();
 
   useEffect(() => {
-    setPickCatategories(categories);
-  }, [setPickCatategories]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!isLoaded && !isLoading) {
+      setPickCatategories(categories);
+      setIsLoaded(true);
+    }
+  }, [isLoaded, isLoading, categories, setPickCatategories, setIsLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="w-full px-[5%] pb-[5.5rem] md:mt-[-4.5rem]">
-      <CLog props={[memos]} />
       {isOpenNew || (
         <button
           className={`fixed top-4 left-4 z-40 text-4xl px-4 h-16 bg-blue-500 text-white rounded hover:bg-blue-600 min-[1936px]:left-[calc((100%_-_1920px)_/_2)]`}
@@ -136,7 +136,7 @@ export const Memos: FC<Props> = ({ isShowBgPreview, onClickShowBgPreview }) => {
                 ? 'bg-red-500 hover:bg-red-600 pointer-events-auto'
                 : 'bg-gray-500 pointer-events-none'
             }`}
-            onClick={showMemosDel}
+            onClick={() => showMemosDel}
           >
             まとめて削除
           </Button>

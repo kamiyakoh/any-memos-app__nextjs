@@ -1,14 +1,12 @@
 import { useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useSWRConfig } from 'swr';
 
 import { useCategory } from 'app/_hooks/useCategory';
 import { useLogin } from 'app/_hooks/useLogin';
-import { useMemos } from 'app/_hooks/useMemos';
+import { MemoData } from 'app/_types';
 import { clientAxiosInstance } from 'app/_utils/clientAxiosInstance';
-
-import type { MemoData } from '../_types';
-import type { UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 
 interface EditFormValues {
   id: string;
@@ -26,8 +24,8 @@ interface UseEdit {
 }
 
 export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
+  const { mutate } = useSWRConfig();
   const { handle401 } = useLogin();
-  const { refetchMemos } = useMemos();
   const { addPickCategories } = useCategory();
   const { register, handleSubmit, watch, reset } = useForm<EditFormValues>({
     defaultValues: {
@@ -57,7 +55,7 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
         if (res.status === 200) {
           const prevTitle = memo.title;
           const prevCat = memo.category;
-          await refetchMemos();
+          await mutate('/api/memos');
           addPickCategories(category);
           reset();
           toast.success(
@@ -79,7 +77,7 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
         toast.error('エラーが発生しました');
       }
     },
-    [memo, addPickCategories, reset, refetchMemos, closeModal, handle401]
+    [memo, addPickCategories, reset, mutate, closeModal, handle401]
   );
 
   return { watchDate, register, handleSubmit, editMemo };

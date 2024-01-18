@@ -2,11 +2,10 @@
 import dayjs from 'dayjs';
 import { useMemo, useCallback } from 'react';
 
-import { useMenu } from './useMenu';
+import { useMenu } from 'app/_hooks/useMenu';
+import { BgImg, BgFilter, MixBlendMode } from 'app/_types';
 
-import type { BgImg, BgFilter, MixBlendMode } from '../_types';
-
-interface BgBrend {
+export interface BgBrend {
   colors: string[];
   mixBrendMode: MixBlendMode;
 }

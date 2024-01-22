@@ -8,9 +8,9 @@ export const clientAxiosInstance = axios.create({
 
 clientAxiosInstance.interceptors.request.use((config) => {
   if (typeof document !== 'undefined') {
-    const token = document.cookie ?? ''.split('; ').find((row) => row.startsWith('token'));
-    const tokenValue = token.split('=')[1];
-    config.headers.Authorization = `Bearer ${tokenValue}`;
+    const token = document.cookie !== '' ? document.cookie.split('; ').find((row) => /^token=/.test(row)) : undefined;
+    const tokenValue = token !== undefined ? token.split('=')[1] : undefined;
+    config.headers.Authorization = tokenValue !== undefined ? `Bearer ${tokenValue}` : '';
   }
   return config;
 });

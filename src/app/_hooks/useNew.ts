@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { useCallback } from 'react';
 import { useForm, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -56,24 +57,26 @@ export const useNew = (): UseNew => {
           toast.success('新しいメモを作成しました');
         }
       } catch (error) {
-        if (error.response !== undefined) {
-          const { status, data } = error.response as { status: number; data: string };
+        if (isAxiosError(error)) {
+          if (error.response !== undefined) {
+            const { status, data } = error.response as { status: number; data: string };
 
-          if (status === 401) {
-            console.log('Unauthorized: 401');
-            handle401();
-          } else if (status === 400) {
-            toast.error(data);
+            if (status === 401) {
+              console.log('Unauthorized: 401');
+              handle401();
+            } else if (status === 400) {
+              toast.error(data);
+            } else {
+              console.log('Unexpected Error:', status);
+              toast.error('エラーが発生しました');
+            }
+          } else if (error.request !== undefined) {
+            console.log('No response received');
+            toast.error('エラーが発生しました');
           } else {
-            console.log('Unexpected Error:', status);
+            console.log('Error setting up the request:', error.message);
             toast.error('エラーが発生しました');
           }
-        } else if (error.request !== undefined) {
-          console.log('No response received');
-          toast.error('エラーが発生しました');
-        } else {
-          console.log('Error setting up the request:', error.message);
-          toast.error('エラーが発生しました');
         }
       }
     },

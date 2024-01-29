@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { useCallback } from 'react';
 import { useForm, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -66,15 +67,34 @@ export const useEdit = (memo: MemoData, closeModal: () => void): UseEdit => {
           );
           closeModal();
         }
-        if (res.status === 401) {
+        /*         if (res.status === 401) {
           handle401();
         }
         if (res.status === 400) {
           const responseError = res.data as { errorMessage: string };
           toast.error(responseError.errorMessage);
-        }
+        } */
       } catch (error) {
-        toast.error('エラーが発生しました');
+        if (!isAxiosError(error)) {
+          console.log({ error });
+          toast.error('エラーが発生しました');
+        } else {
+          if (error.response !== undefined) {
+            const { status, data } = error.response as { status: number; data: string };
+
+            switch (status) {
+              case 401:
+                handle401();
+                break;
+              case 400:
+                toast.error(data);
+                break;
+              default:
+                toast.error('エラーが発生しました');
+                break;
+            }
+          }
+        }
       }
     },
     [memo, addPickCategories, reset, mutate, closeModal, handle401]

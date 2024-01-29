@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MemoData } from 'app/_types';
 import { dbAxiosInstance } from 'app/_utils/axiosInstance';
 import { authorization } from 'app/api/authorization';
+import { isValidDate, errorMessage } from 'app/api/valid';
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
   const authZ = await authorization(req);
@@ -45,6 +46,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       const id = params.id;
       const body = (await req.json()) as Omit<MemoData, 'id'>;
       const { title, category, description, date, markDiv } = body;
+      if (title === '' || !isValidDate(date) || Number.isNaN(markDiv)) {
+        return NextResponse.json(errorMessage(title, date, markDiv), { status: 400 });
+      }
       const resMemo = (
         await dbAxiosInstance.put(`/memos/${id}`, {
           id,

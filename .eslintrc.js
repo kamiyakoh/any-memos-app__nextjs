@@ -3,14 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'next/core-web-vitals',
-    'standard-with-typescript',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'prettier',
-  ],
+  extends: ['next/core-web-vitals', 'standard-with-typescript', 'plugin:react/recommended', 'plugin:@typescript-eslint/recommended', 'plugin:@typescript-eslint/recommended-requiring-type-checking', 'prettier', 'plugin:storybook/recommended', 'plugin:storybook/recommended', 'plugin:storybook/recommended'],
   overrides: [
     {
       env: {

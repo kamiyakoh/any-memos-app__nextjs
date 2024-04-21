@@ -22,7 +22,6 @@ const meta = {
   argTypes: {
     children: { control: 'text' },
     className: {
-      label: 'color',
       options: Object.keys(classNames),
       mapping: classNames,
       control: {
@@ -50,7 +49,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Nomal: Story = {
+export const Normal: Story = {
   args: {
     type: 'button',
     children: 'ボタン',

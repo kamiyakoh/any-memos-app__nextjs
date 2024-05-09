@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
 import { FrostedGlass } from '../uiParts/FrostedGlass';
-import exp from 'constants';
 
 const meta = {
   title: 'FrostedGlass',
   component: FrostedGlass,
+  tags: ['autodocs'],
   argTypes: {
     className: { control: 'text' },
     style: { control: 'object' },

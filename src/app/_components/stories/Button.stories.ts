@@ -16,6 +16,7 @@ const classNames = {
 const meta = {
   title: 'Button',
   component: Button,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },

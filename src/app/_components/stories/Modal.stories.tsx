@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { fn } from '@storybook/test';
 import { RecoilRoot, MutableSnapshot } from 'recoil';
 import { categoriesState } from '@@/app/_states/categories';
-import { Modal, Props } from '../uiParts/Modal';
+import { Modal } from '../uiParts/Modal';
 import { FrostedGlass } from '../uiParts/FrostedGlass';
 import { Button } from '../uiParts/Button';
 import { Login as LoginComponent } from '../Login';

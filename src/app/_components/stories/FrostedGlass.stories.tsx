@@ -52,7 +52,6 @@ export const SortBoard: Story = {
     children: '',
   },
   render: ({ ...args }) => {
-    const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
     const [sortIdDate, setSortIdDate] = useState<SortIdDate>('idAsc');
     const [pickDateDiff, setPickDateDiff] = useState<PickDateDiff>('all');
     const [pickMarkDiv, setPickMarkDiv] = useState<PickMarkDiv>('-1');

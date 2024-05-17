@@ -35,5 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# GitHub Actions specific logs
+.github/actions/logs/
+
 /old-src
 *storybook.log
+.env

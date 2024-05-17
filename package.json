@@ -13,7 +13,7 @@
     "dev": "concurrently \"yarn run json-server\" \"yarn run next-dev\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "chromatic --only-changed"
+    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --only-changed"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",

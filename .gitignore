@@ -41,3 +41,4 @@ next-env.d.ts
 /old-src
 *storybook.log
 .env
+/storybook-static
